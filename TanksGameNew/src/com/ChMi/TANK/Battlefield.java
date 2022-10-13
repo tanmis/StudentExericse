@@ -3,13 +3,19 @@ package com.ChMi.TANK;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Scanner;
 import java.util.Vector;
 
 public class Battlefield extends Panel implements KeyListener ,Runnable {
+    Scanner scanner = new Scanner(System.in);
+    //成绩显示
+   private String grades = "wait";
+    private int key = 1;
     //写入一个空的计算器
     private Recode times = null;
     private MyTank tb = null;//主控坦克
-    private Vector<Enemytanks> enemytanks = new Vector<>();//敌方坦克属性列表
+    private Vector<Node>nodes = new Vector<>();//node属性
+    private Vector<Enemytanks> enemytanks = new Vector<>() ;//敌方坦克属性列表
     private int enemytanksize = 3;
     private Vector<BoomKill> boomKs ;//爆炸效果
     //爆炸效果图
@@ -17,23 +23,64 @@ public class Battlefield extends Panel implements KeyListener ,Runnable {
     private Image image1;
     private Image image2;
     public Battlefield(){
+        System.out.println("请输入是否重开 1 重新开始 ，2 继续上局,默认新局");
+        System.out.println(key);
+        System.out.println("我先11");
+//        初始化nodes集合方便继续上局游戏
+        setNodes();
+        //将enemytanks集合放入计算器中
+        Recode.setEnemytanks(enemytanks);
         //初始化计数器
         times = new Recode();
          boomKs = new Vector<>();//爆炸列表初始化 ,当敌人击中坦克加入爆炸效果
         image = Toolkit.getDefaultToolkit().createImage(Panel.class.getResource("/bomb_1.gif"));
         image1 = Toolkit.getDefaultToolkit().createImage(Panel.class.getResource("/bomb_2.gif"));
         image2 = Toolkit.getDefaultToolkit().createImage(Panel.class.getResource("/bomb_3.gif"));
+        new AePlayWave("E:\\appdesign\\example(all)\\java\\idea_java.projeck\\TanksGameNew\\111.wav").start();
+
         //初始化敌方坦克
-        for (int i = 0; i < enemytanksize; i++) {
-            enemytanks.add(new Enemytanks(100 * (i + 1),0));
-            enemytanks.get(i).setDirection(1);
-            new Thread(enemytanks.get(i)).start();
-            Launch ENbullet = new Launch(enemytanks.get(i).getX() + 20 , enemytanks.get(i).getY() + 60,enemytanks.get(i).getDirection());
-            enemytanks.get(i).bullet.add(ENbullet);
-            new Thread(ENbullet).start();
-            enemytanks.get(i).setEnemytanks(enemytanks);
-        }
-        tb = new MyTank(100,100);
+//        switch (this.key){
+//            //不重开
+//            case 1:
+//                for (int i = 0; i < enemytanksize; i++) {
+//                    enemytanks.add(new Enemytanks(100 * (i + 1),0));
+//                    enemytanks.get(i).setDirection(1);
+//                    new Thread(enemytanks.get(i)).start();
+//                    Launch ENbullet = new Launch(enemytanks.get(i).getX() + 20 , enemytanks.get(i).getY() + 60,enemytanks.get(i).getDirection());
+//                    enemytanks.get(i).bullet.add(ENbullet);
+//                    new Thread(ENbullet).start();
+//                    enemytanks.get(i).setEnemytanks(enemytanks);
+//                }
+//                break;
+//                //重开
+//            case 2:
+//                for (int i = 0; i <nodes.size(); i++) {
+//                    Node node = nodes.get(i);
+//                    enemytanks.add(new Enemytanks( node.getX(),node.getY()));
+//                    enemytanks.get(i).setDirection(node.getDirection());
+//                    new Thread(enemytanks.get(i)).start();
+//                    Launch ENbullet = new Launch(enemytanks.get(i).getX() + 20 , enemytanks.get(i).getY() + 60,enemytanks.get(i).getDirection());
+//                    enemytanks.get(i).bullet.add(ENbullet);
+//                    new Thread(ENbullet).start();
+//                    enemytanks.get(i).setEnemytanks(enemytanks);
+//                }
+//                break;
+//        }
+//        //初始化敌方坦克
+//        for (int i = 0; i < enemytanksize; i++) {
+//            enemytanks.add(new Enemytanks(100 * (i + 1),0));
+//            enemytanks.get(i).setDirection(1);
+//            new Thread(enemytanks.get(i)).start();
+//            Launch ENbullet = new Launch(enemytanks.get(i).getX() + 20 , enemytanks.get(i).getY() + 60,enemytanks.get(i).getDirection());
+//            enemytanks.get(i).bullet.add(ENbullet);
+//            new Thread(ENbullet).start();
+//            enemytanks.get(i).setEnemytanks(enemytanks);
+//        }
+        chesstanks(key);
+        //初始化主控坦克
+        tb = new MyTank(400,100);
+
+
     }
     @Override
     public void paint(Graphics g) {
@@ -106,6 +153,7 @@ public class Battlefield extends Panel implements KeyListener ,Runnable {
         Tankpa(1032,300,g,2,1);
         g.setColor(Color.black);
         g.drawString(times.getTankskilling() + "",1100,330);
+        g.drawString(grades,1034,700);
 
 
     }
@@ -229,6 +277,7 @@ public class Battlefield extends Panel implements KeyListener ,Runnable {
 //        控制自己坦克行动
         //向上移动
         if (e.getKeyCode() == KeyEvent.VK_UP){
+            System.out.println("if");
             if (tb.getY()  > 0){
                 tb.setDirection(0);
                 tb.moveup();
@@ -250,10 +299,9 @@ public class Battlefield extends Panel implements KeyListener ,Runnable {
                 tb.setDirection(2);
                 tb.movelietf();
             }
+            else if (e.getKeyCode() == KeyEvent.VK_2){
 
-
-
-
+            }
 
         }
         //向右移动；
@@ -274,6 +322,14 @@ public class Battlefield extends Panel implements KeyListener ,Runnable {
             tb.Shotpress();
 
         }
+        if (e.getKeyCode() == KeyEvent.VK_1){
+            key = 1;
+            chesstanks(key);
+        }
+        if (e.getKeyCode() == KeyEvent.VK_2){
+            key = 2;
+            chesstanks(key);
+        }
         repaint();
 
 
@@ -281,6 +337,42 @@ public class Battlefield extends Panel implements KeyListener ,Runnable {
 
     @Override
     public void keyReleased(KeyEvent e) {
+
+    }
+    private void chesstanks(int key){//控制模式选择
+        key = this.key;
+        switch (key){
+            //不重开
+            case 1:
+                enemytanks.clear();
+                times.setTankskilling(0);
+                for (int i = 0; i < enemytanksize; i++) {
+                    enemytanks.add(new Enemytanks(100 * (i + 1),0));
+                    enemytanks.get(i).setDirection(1);
+                    new Thread(enemytanks.get(i)).start();
+                    Launch ENbullet = new Launch(enemytanks.get(i).getX() + 20 , enemytanks.get(i).getY() + 60,enemytanks.get(i).getDirection());
+                    enemytanks.get(i).bullet.add(ENbullet);
+                    new Thread(ENbullet).start();
+                    enemytanks.get(i).setEnemytanks(enemytanks);
+                    tb = new MyTank(400,100);
+                }
+                break;
+            //重开
+            case 2:
+                enemytanks.clear();
+                times.setTankskilling(times.getSave());
+                for (int i = 0; i <nodes.size(); i++) {
+                    Node node = nodes.get(i);
+                    enemytanks.add(new Enemytanks( node.getX(),node.getY()));
+                    enemytanks.get(i).setDirection(node.getDirection());
+                    new Thread(enemytanks.get(i)).start();
+                    Launch ENbullet = new Launch(enemytanks.get(i).getX() + 20 , enemytanks.get(i).getY() + 60,enemytanks.get(i).getDirection());
+                    enemytanks.get(i).bullet.add(ENbullet);
+                    new Thread(ENbullet).start();
+                    enemytanks.get(i).setEnemytanks(enemytanks);
+                }
+                break;
+        }
 
     }
 
@@ -311,8 +403,35 @@ public class Battlefield extends Panel implements KeyListener ,Runnable {
                 }
 
             }
+            victory();
 
             this.repaint() ;
         }
     }
+    public void  victory(){//判断胜利
+
+        int count = 0;
+        if (!(tb.issurvive)){
+            System.out.println("失败");
+            grades = "失败";
+            System.out.println("是否进行下局 1:下一局");
+            return;
+        }
+        for (int i = 0; i < enemytanks.size(); i++){
+            Enemytanks one = this.enemytanks.get(i);
+            if (!(one.issurvive)){
+                count ++;
+            }
+        }
+        if (enemytanksize == count){
+            grades = "成功";
+            System.out.println("是否进行下局 1:下一局");
+        }
+    }
+
+    public void setNodes() {
+        this.nodes = Recode.makedataWandR();
+    }
+
+
 }

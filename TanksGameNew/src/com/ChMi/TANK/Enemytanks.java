@@ -10,6 +10,7 @@ public class Enemytanks extends Tank implements Runnable {
 
     public Enemytanks(int x, int y) {
         super(x, y);
+
     }
 
     public void setEnemytanks(Vector<Enemytanks> enemytanks) {
