@@ -355,6 +355,7 @@ public class Battlefield extends Panel implements KeyListener ,Runnable {
                     new Thread(ENbullet).start();
                     enemytanks.get(i).setEnemytanks(enemytanks);
                     tb = new MyTank(400,100);
+                    new AePlayWave("E:\\appdesign\\example(all)\\java\\idea_java.projeck\\TanksGameNew\\111.wav").start();
                 }
                 break;
             //重开
@@ -370,6 +371,7 @@ public class Battlefield extends Panel implements KeyListener ,Runnable {
                     enemytanks.get(i).bullet.add(ENbullet);
                     new Thread(ENbullet).start();
                     enemytanks.get(i).setEnemytanks(enemytanks);
+                    new AePlayWave("E:\\appdesign\\example(all)\\java\\idea_java.projeck\\TanksGameNew\\111.wav").start();
                 }
                 break;
         }
