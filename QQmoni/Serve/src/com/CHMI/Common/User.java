@@ -9,10 +9,9 @@ import java.io.Serializable;
  */
 public class User implements Serializable {
     private static final long serialVersionUID = 1L;//提高兼容性
+
     private String userid;//用户id
     private String password;//密码
-
-
     public String getUserid() {
         return userid;
     }

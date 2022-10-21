@@ -3,14 +3,11 @@ package com.CHMI.QQclients.service;
 import com.CHMI.Common.Message;
 import com.CHMI.Common.MessageType;
 import com.CHMI.Common.User;
-import com.sun.java_cup.internal.runtime.Scanner;
 
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 /**
  * @author 茶米酱
@@ -18,11 +15,16 @@ import java.net.UnknownHostException;
  * 客户端把客户类信息进行处理
  */
 public class UserClientServe {
+    //用户信息类
     private  User u = null;
+    //网络连接服务端用
     private Socket socket =null;
+    private boolean certain = false;//取得返回值是否成功
     public boolean ChekUser(String uid,String pwd)  {
         try {
-            u = new User(uid,pwd);
+            u = new User();
+            u.setUserid(uid);
+            u.setPassword(pwd);
             socket = new Socket(InetAddress.getByName("192.168.199.1"), 9999);
             //将u序列化发给服务端
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
@@ -31,17 +33,22 @@ public class UserClientServe {
             ObjectInputStream oip = new ObjectInputStream(socket.getInputStream());
             Message message= (Message) oip.readObject();
             if (message.getContenttype().equals(MessageType.Login_success_prompt)){
-                return true;
+                //启动线程将socket交给线程·持有
+                ClientConnectServeThread ccst = new ClientConnectServeThread(socket);
+                ccst.start();
+                //把线程加入线程管理集合
+                ManageClientConnectServeThread.addManageuserthread(uid,ccst);
+                 certain = true;
             }
             else {
-                return false;
+                //如果失败关闭网络io
+                socket.close();
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
 
         }
-        return false;
-
+        return certain;
     }
 }

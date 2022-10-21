@@ -22,6 +22,7 @@ public class ClientConnectServeThread extends Thread {
     public void run() {
         while (true){
             try {
+                System.out.println("客户端和服务器端保持通讯");
                 ObjectInputStream oit = new ObjectInputStream(socket.getInputStream());
                 Message object = (Message) oit.readObject();
             } catch (IOException e) {

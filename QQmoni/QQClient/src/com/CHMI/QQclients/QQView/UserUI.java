@@ -1,5 +1,7 @@
 package com.CHMI.QQclients.QQView;
 
+import com.CHMI.QQclients.service.UserClientServe;
+
 import java.util.Scanner;
 
 /**
@@ -10,6 +12,8 @@ import java.util.Scanner;
 public class UserUI {
     private Boolean loop  = true;
     private int key;
+    //用于登录服务器
+    private  UserClientServe ucs = new UserClientServe();;
 
     public static void main(String[] args) {
         new UserUI().menu();
@@ -31,7 +35,8 @@ public class UserUI {
                     String userid = Utility.readString(50);
                     System.out.println("\n\t\t请输入密码");
                     String pwd = Utility.readString(50);
-                    if (true){
+                    //传入比较方法进行比较
+                    if (ucs.ChekUser(userid,pwd)){
                         System.out.println("==========欢迎登录"+userid+"==============");
                         do {
                             System.out.println("========欢迎来到二级目录("+userid+")==========");
