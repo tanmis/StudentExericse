@@ -8,6 +8,7 @@ import java.io.Serializable;
  *用户信息存储
  */
 public class Message implements Serializable {
+    private static final long serialVersionUID = 2L;//提高兼容性
     private String sender;//发送者
     private String receiver;//接收者
     private String content;//内容

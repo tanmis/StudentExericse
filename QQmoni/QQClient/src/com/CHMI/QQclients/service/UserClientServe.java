@@ -27,7 +27,7 @@ public class UserClientServe {
 
             u.setUserid(uid);
             u.setPassword(pwd);
-            socket = new Socket(InetAddress.getByName("192.168.199.1"), 9997);
+            socket = new Socket(InetAddress.getByName("192.168.199.1"), 9999);
             //将u序列化发给服务端
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
             oos.writeObject(u);
@@ -57,6 +57,7 @@ public class UserClientServe {
     public void onlineFriendList(){
         //准备数据包
         Message message = new Message();
+        message.setSender(u.getUserid());
         message.setContenttype(MessageType.MESSAGE_GET_ONLINE_FRIEND);
         //得到对应的网络连接
         try {
@@ -65,6 +66,7 @@ public class UserClientServe {
                             ManageClientConnectServeThread.getClientConnectServeThread(
                                     u.getUserid()).getSocket().getOutputStream());
             oos.writeObject(message);//发送给服务端请求读取用户类表
+
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -28,12 +28,12 @@ public class ClientConnectServeThread extends Thread {
                 Message om = (Message) oit.readObject();
                 //拿到服务端返回进行对应处理
                 //如果返回是拉取客户数据
-                if (om.getContenttype().equals(MessageType.MESSAGE_GET_ONLINE_FRIEND)){
+                if (om.getContenttype().equals(MessageType.MESSAGE_RET_ONLINE_FRIEND)){
                     //分割取出
                     System.out.println("==========用户列表===========");
                     String[] s = om.getContent().split(" ");
                     for (int i = 0; i < s.length; i++) {
-                        System.out.println((i+1) + s[i]);
+                        System.out.println((i+1) + "号：\t" + s[i]);
                     }
 
                 }

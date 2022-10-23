@@ -1,6 +1,7 @@
 package com.CHMI.qqserve.serve;
 
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * @author 茶米酱
@@ -9,6 +10,15 @@ import java.util.HashMap;
  */
 public class ManageServeConnectClientThread {
     private static HashMap<String,ServeConnectClientThread > hashMap = new HashMap<>();
+   //返回一个用户登录列表
+    public static String getuserid(){
+        String alluseriding = "";
+        Set<String> keySet = hashMap.keySet();
+        for (Object key:keySet){
+            alluseriding += key + " ";
+        }
+        return alluseriding;
+    }
     //增加线程的方法
     public static void addManageServeConnectClientThread(String user,ServeConnectClientThread serveConnectClientThread){
         hashMap.put(user,serveConnectClientThread);
