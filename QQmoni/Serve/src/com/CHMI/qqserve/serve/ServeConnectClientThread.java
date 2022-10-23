@@ -13,6 +13,7 @@ import java.net.Socket;
  * @version 1.0
  */
 public class ServeConnectClientThread extends Thread{
+    private boolean bloon = true;
     private  Socket socket ;
     private String userid;
 
@@ -22,7 +23,7 @@ public class ServeConnectClientThread extends Thread{
     }
     @Override
     public void run() {
-        while (true){
+        while (bloon){
             try {
                 System.out.println("服务器端和客户端" + userid +"保持通讯");
                 ObjectInputStream oin = new ObjectInputStream(socket.getInputStream());
@@ -39,7 +40,16 @@ public class ServeConnectClientThread extends Thread{
                     oib2.setReceiver(oib.getSender());
                     ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
                     oos.writeObject(oib2);
-                }else {
+                    //如果是退出程序
+                }else if (oib.getContenttype().equals(MessageType.MESSAGE_CLIENT_EXIT)){
+                    ManageServeConnectClientThread.DeleteserveConnectClientThread(userid);
+                    System.out.println("关闭"+ userid + "用户");
+                   bloon = false;
+                   socket.close();
+
+
+                }
+                else {
                     System.out.println("暂不处理");
                 }
             } catch (Exception e) {
@@ -47,5 +57,21 @@ public class ServeConnectClientThread extends Thread{
             }  finally {
             }
         }
+    }
+
+    public Socket getSocket() {
+        return socket;
+    }
+
+    public void setSocket(Socket socket) {
+        this.socket = socket;
+    }
+
+    public boolean isBloon() {
+        return bloon;
+    }
+
+    public void setBloon(boolean bloon) {
+        this.bloon = bloon;
     }
 }

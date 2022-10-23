@@ -28,4 +28,10 @@ public class ManageServeConnectClientThread {
     public static ServeConnectClientThread getserveConnectClientThread(String user) {
        return hashMap.get(user);
     }
+    //删除退出的线程
+    public static void DeleteserveConnectClientThread(String userid){
+        hashMap.remove(userid);
+    }
 }
+
+

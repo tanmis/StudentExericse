@@ -63,6 +63,7 @@ public class UserUI {
                                     break;
                                 case 9:
                                     loop = false;
+                                    ucs.logout();
                                     break;
                             }
                         }while (loop);
