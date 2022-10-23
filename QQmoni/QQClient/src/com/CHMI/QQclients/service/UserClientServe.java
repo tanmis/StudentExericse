@@ -3,7 +3,9 @@ package com.CHMI.QQclients.service;
 import com.CHMI.Common.Message;
 import com.CHMI.Common.MessageType;
 import com.CHMI.Common.User;
+import sun.rmi.server.MarshalOutputStream;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
@@ -16,16 +18,16 @@ import java.net.Socket;
  */
 public class UserClientServe {
     //用户信息类
-    private  User u = null;
+    private  User u =  new User();
     //网络连接服务端用
     private Socket socket =null;
     private boolean certain = false;//取得返回值是否成功
     public boolean ChekUser(String uid,String pwd)  {
         try {
-            u = new User();
+
             u.setUserid(uid);
             u.setPassword(pwd);
-            socket = new Socket(InetAddress.getByName("192.168.199.1"), 9999);
+            socket = new Socket(InetAddress.getByName("192.168.199.1"), 9997);
             //将u序列化发给服务端
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
             oos.writeObject(u);
@@ -50,5 +52,23 @@ public class UserClientServe {
 
         }
         return certain;
+    }
+    //要求服务端给上线成员信息
+    public void onlineFriendList(){
+        //准备数据包
+        Message message = new Message();
+        message.setContenttype(MessageType.MESSAGE_GET_ONLINE_FRIEND);
+        //得到对应的网络连接
+        try {
+            ObjectOutputStream oos =
+                    new ObjectOutputStream(
+                            ManageClientConnectServeThread.getClientConnectServeThread(
+                                    u.getUserid()).getSocket().getOutputStream());
+            oos.writeObject(message);//发送给服务端请求读取用户类表
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
     }
 }

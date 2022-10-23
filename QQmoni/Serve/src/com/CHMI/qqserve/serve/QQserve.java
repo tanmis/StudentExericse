@@ -10,6 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
 
 /**
  * @author 茶米酱
@@ -20,7 +21,14 @@ public class QQserve {
     private ServerSocket serverSocket;
     private Socket socket;
     private User user;
-
+    private static HashMap<String,User> uhm = new HashMap<>();
+    static {
+        uhm.put("100",new User("100","1234"));
+        uhm.put("200",new User("200","1234"));
+        uhm.put("300",new User("300","1234"));
+        uhm.put("400",new User("400","1234"));
+        uhm.put("500",new User("500","1234"));
+    }
 
     public QQserve(){
         try {
@@ -35,7 +43,7 @@ public class QQserve {
                 Message message = new Message();
                 ObjectOutputStream oio = new ObjectOutputStream(socket.getOutputStream());
                 //安全验证
-                if (u.getUserid().equals("100")&&u.getPassword().equals("1234")){
+                if (checkuser(u.getUserid(),u.getPassword())){
                     //设置登录成功
                     message.setContenttype(MessageType.Login_success_prompt);
                     oio.writeObject(message);
@@ -67,5 +75,17 @@ public class QQserve {
                 e.printStackTrace();
             }
         }
+    }
+    //安全验证
+    public boolean checkuser(String userid,String passwd){
+        User user = uhm.get(userid);
+        if (user == null){
+            return false;
+        }
+        if (!(passwd.equals(user.getPassword()))){
+
+            return false;
+        }
+        return true;
     }
 }

@@ -50,6 +50,7 @@ public class UserUI {
                             switch (key){
                                 case 1:
                                     System.out.println("群发文件");
+                                    ucs.onlineFriendList();
                                     break;
                                 case 2:
                                     System.out.println("群发消息");

@@ -1,6 +1,7 @@
 package com.CHMI.QQclients.service;
 
 import com.CHMI.Common.Message;
+import com.CHMI.Common.MessageType;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -24,7 +25,21 @@ public class ClientConnectServeThread extends Thread {
             try {
                 System.out.println("客户端和服务器端保持通讯");
                 ObjectInputStream oit = new ObjectInputStream(socket.getInputStream());
-                Message object = (Message) oit.readObject();
+                Message om = (Message) oit.readObject();
+                //拿到服务端返回进行对应处理
+                //如果返回是拉取客户数据
+                if (om.getContenttype().equals(MessageType.MESSAGE_GET_ONLINE_FRIEND)){
+                    //分割取出
+                    System.out.println("==========用户列表===========");
+                    String[] s = om.getContent().split(" ");
+                    for (int i = 0; i < s.length; i++) {
+                        System.out.println((i+1) + s[i]);
+                    }
+
+                }
+                else {
+                    System.out.println("其他不处理目前");
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
