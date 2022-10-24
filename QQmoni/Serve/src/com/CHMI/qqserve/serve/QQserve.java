@@ -33,7 +33,7 @@ public class QQserve {
     public QQserve(){
         try {
             System.out.println("服务端在9999监听。。。。。");
-            serverSocket = new ServerSocket(9999);
+            serverSocket = new ServerSocket(9997);
             while (true){
                 socket = serverSocket.accept();
                 //验证是否是用户本人，安全验证

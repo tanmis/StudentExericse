@@ -5,6 +5,7 @@ import com.CHMI.Common.MessageType;
 import com.CHMI.Common.User;
 import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -22,6 +23,19 @@ public class ServeConnectClientThread extends Thread{
     public  ServeConnectClientThread(String userid,Socket socket) {
         this.socket = socket;
         this.userid = userid;
+        //离线问件查看是否有
+        if (ManageOfflineCustomerData.getmessage(userid)!= null){
+            try {
+                System.out.println("发送存储过到文件给"+userid);
+                ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+                oos.writeObject(ManageOfflineCustomerData.getmessage(userid));
+                System.out.println("删除托管无用文件");
+                ManageOfflineCustomerData.deleteManagemessages(userid);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
     @Override
     public void run() {
@@ -33,6 +47,7 @@ public class ServeConnectClientThread extends Thread{
                 Message oib =(Message) oin.readObject();
                 //后面会用message进行通讯
                 //如果判断用户是否要拉取在线用户名单
+
                 if (oib.getContenttype().equals(MessageType.MESSAGE_GET_ONLINE_FRIEND)){
                     System.out.println(oib.getSender() + "请求在线用户列表");
                     //将名单返回给客户端
@@ -60,6 +75,12 @@ public class ServeConnectClientThread extends Thread{
                     oib2.setReceiver(oib.getReceiver());
                     oib2.setTimes(new java.util.Date().toString());
                     oib2.setContenttype(MessageType.MESSAGE_COMM_MES);
+//                    如果用户不在线处理
+                   if (ManageServeConnectClientThread.getserveConnectClientThread(oib.getReceiver())== null){
+                        System.out.println("拿到离线用户信息");
+                        ManageOfflineCustomerData.putManagemessages(oib.getReceiver(),oib2);
+                        break;
+                    }
 
                     //取出指定要发送的私聊的人的io进行发送
                     ObjectOutputStream oos =
@@ -106,6 +127,7 @@ public class ServeConnectClientThread extends Thread{
                     oos.writeObject(message);
 
                 }
+                //判断是否有离线消息
                 else {
                     System.out.println("暂不处理");
                 }

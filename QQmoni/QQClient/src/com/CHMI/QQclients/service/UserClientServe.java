@@ -25,7 +25,7 @@ public class UserClientServe {
 
             u.setUserid(uid);
             u.setPassword(pwd);
-            socket = new Socket(InetAddress.getByName("192.168.199.1"), 9999);
+            socket = new Socket(InetAddress.getByName("192.168.199.1"), 9997);
             //将u序列化发给服务端
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
             oos.writeObject(u);
