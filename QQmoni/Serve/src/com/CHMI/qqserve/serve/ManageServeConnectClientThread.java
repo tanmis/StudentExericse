@@ -32,6 +32,15 @@ public class ManageServeConnectClientThread {
     public static void DeleteserveConnectClientThread(String userid){
         hashMap.remove(userid);
     }
+
+    public static HashMap<String, ServeConnectClientThread> getHashMap() {
+        return hashMap;
+    }
+
+    public static void setHashMap(HashMap<String, ServeConnectClientThread> hashMap) {
+        ManageServeConnectClientThread.hashMap = hashMap;
+    }
 }
+
 
 

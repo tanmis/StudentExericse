@@ -53,6 +53,10 @@ public class QQserve {
                     serveConnectClientThread.start();
                     //将线程集体管理
                     ManageServeConnectClientThread.addManageServeConnectClientThread(u.getUserid(),serveConnectClientThread);
+                    //客户端是否进行推送处理
+                   new Thread(new ServerInformationPush()).start();
+
+
                 }
                 else {
                     //登录失败
@@ -87,5 +91,13 @@ public class QQserve {
             return false;
         }
         return true;
+    }
+
+    public static HashMap<String, User> getUhm() {
+        return uhm;
+    }
+
+    public static void setUhm(HashMap<String, User> uhm) {
+        QQserve.uhm = uhm;
     }
 }

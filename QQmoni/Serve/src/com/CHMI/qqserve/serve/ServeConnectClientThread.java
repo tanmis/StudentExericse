@@ -2,11 +2,13 @@ package com.CHMI.qqserve.serve;
 
 import com.CHMI.Common.Message;
 import com.CHMI.Common.MessageType;
+import com.CHMI.Common.User;
 import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.HashMap;
 
 /**
  * @author 茶米酱
@@ -47,6 +49,61 @@ public class ServeConnectClientThread extends Thread{
                    bloon = false;
                    socket.close();
 
+
+                }//如果是私聊信息发送
+                else if (oib.getContenttype().equals(MessageType.MESSAGE_COMM_MES)){
+                    //将要传输信息打包
+                    Message oib2 = new Message();
+                    oib2.setContent(oib.getContent());
+                    oib2.setSender(oib.getSender());
+                    System.out.println(oib.getSender());
+                    oib2.setReceiver(oib.getReceiver());
+                    oib2.setTimes(new java.util.Date().toString());
+                    oib2.setContenttype(MessageType.MESSAGE_COMM_MES);
+
+                    //取出指定要发送的私聊的人的io进行发送
+                    ObjectOutputStream oos =
+                            new ObjectOutputStream(
+                                    ManageServeConnectClientThread.getserveConnectClientThread(
+                                            oib.getReceiver()).getSocket().getOutputStream());
+                    oos.writeObject(oib2);
+
+                }
+                //如果是群发
+                else if (oib.getContenttype().equals(MessageType.MESSAGE_TO_ALL_MES)){
+                    String[] mscct = ManageServeConnectClientThread.getuserid().split(" ");
+                    for (int i = 0; i < mscct.length; i++) {
+                        Message oib2 = new Message();
+                        oib2.setContent(oib.getContent());
+                        oib2.setContenttype(MessageType.MESSAGE_TO_ALL_MES);
+                        oib2.setTimes(new java.util.Date().toString());
+                        oib2.setSender(userid);
+                        //判断是否为自己
+                        if (oib.getSender().equals(mscct[i])){
+                            continue;
+                        }
+                        oib2.setReceiver(mscct[i]);
+                        //发送给其他人
+                        ObjectOutputStream oos =
+                                new ObjectOutputStream(
+                                        ManageServeConnectClientThread.getserveConnectClientThread(
+                                                mscct[i]).socket.getOutputStream());
+                        oos.writeObject(oib2);
+                    }
+                }
+                //如果发送文件
+                else if (oib.getContenttype().equals(MessageType.MESSAGE_FILE_MES)){
+                    Message message = new Message();
+                    message.setContenttype(MessageType.MESSAGE_FILE_MES);
+                    message.setReceiver(oib.getReceiver());
+                    message.setSender(oib.getSender());
+                    message.setContent(oib.getContent());
+                    message.setTimes(new java.util.Date().toString());
+                    ObjectOutputStream oos =
+                            new ObjectOutputStream(
+                                    ManageServeConnectClientThread.getserveConnectClientThread(
+                                            oib.getReceiver()).socket.getOutputStream());
+                    oos.writeObject(message);
 
                 }
                 else {

@@ -5,9 +5,7 @@ import com.CHMI.Common.MessageType;
 import com.CHMI.Common.User;
 import sun.rmi.server.MarshalOutputStream;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 
@@ -89,6 +87,51 @@ public class UserClientServe {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+    }
+    //私聊方法
+    public void Messagessentprivately(String userid,String word){
+        try {
+
+            Message message = new Message();
+            message.setSender(u.getUserid());
+            message.setReceiver(userid);
+            message.setContent(word);
+            message.setContenttype(MessageType.MESSAGE_COMM_MES);
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+            oos.writeObject(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+    //群发消息
+    public void sendmassmessages(String word){
+        Message message = new Message();
+        message.setSender(u.getUserid());
+        message.setContent(word);
+        message.setContenttype(MessageType.MESSAGE_TO_ALL_MES);
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+            oos.writeObject(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    //发送文件
+    public void Sendthefile(String receiver,String fill,String counterpartaddress) {
+        try {
+            Message message = new Message();
+            message.setContenttype(MessageType.MESSAGE_FILE_MES);
+            message.setSender(u.getUserid());
+            message.setContent(fill + " "+counterpartaddress);
+            message.setReceiver(receiver);
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+            oos.writeObject(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
     }
 }

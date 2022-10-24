@@ -49,17 +49,31 @@ public class UserUI {
                             key = Integer.parseInt(Utility.readString(1));
                             switch (key){
                                 case 1:
-                                    System.out.println("群发文件");
+                                    System.out.println("显示用户在线列表");
                                     ucs.onlineFriendList();
                                     break;
                                 case 2:
                                     System.out.println("群发消息");
+                                    System.out.println("输入要发的消息");
+                                    String s = Utility.readString(1000);
+                                    ucs.sendmassmessages(s);
                                     break;
                                 case 3:
-                                    System.out.println("私发消息·");
+                                    System.out.println("私发消息·请输入需要发给的人id");
+                                    String onlysenduserid = Utility.readString(100);
+                                    System.out.println("请输入私聊信息(限制一万字）");
+                                    String onlysendword = Utility.readString(100000);
+                                    ucs.Messagessentprivately(onlysenduserid,onlysendword);
                                     break;
                                 case 4:
-                                    System.out.println("退出系统");
+                                    System.out.println("发送文件");
+                                    System.out.println("发送给谁");
+                                    String filluserid = Utility.readString(50);
+                                    System.out.println("文件路径");
+                                    String filladdress = Utility.readString(50);
+                                    System.out.println("对方电脑路径");
+                                    String counterpartaddress = Utility.readString(50);
+                                    ucs.Sendthefile(filluserid,filladdress,counterpartaddress);
                                     break;
                                 case 9:
                                     loop = false;

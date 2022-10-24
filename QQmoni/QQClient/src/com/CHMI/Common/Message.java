@@ -52,4 +52,8 @@ public class Message implements Serializable {
     public void setContenttype(String contenttype) {
         this.contenttype = contenttype;
     }
+
+    public String getSender() {
+        return sender;
+    }
 }

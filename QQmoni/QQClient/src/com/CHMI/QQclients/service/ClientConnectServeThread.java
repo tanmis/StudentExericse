@@ -3,8 +3,7 @@ package com.CHMI.QQclients.service;
 import com.CHMI.Common.Message;
 import com.CHMI.Common.MessageType;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
+import java.io.*;
 import java.net.Socket;
 
 /**
@@ -35,6 +34,30 @@ public class ClientConnectServeThread extends Thread {
                     for (int i = 0; i < s.length; i++) {
                         System.out.println((i+1) + "号：\t" + s[i]);
                     }
+
+                }
+                else if (om.getContenttype().equals(MessageType.MESSAGE_COMM_MES)){
+                    System.out.println("=======有消息======");
+                    System.out.println(om.getSender() + "给您发送消息\n"+om.getContent());
+
+                }
+                //群发接收
+                else if (om.getContenttype().equals(MessageType.MESSAGE_TO_ALL_MES)){
+                    System.out.println("=======有消息======");
+                    System.out.println(om.getSender() + "给您发送消息\n"+om.getContent());
+                    System.out.println(om.getTimes());
+                }
+                else if (om.getContenttype().equals(MessageType.MESSAGE_FILE_MES)){
+                    String[] s = om.getContent().split(" ");
+                    System.out.println(om.getSender() + s[0]+"把文件发送到" + om.getReceiver() + "电脑" + s[1]);
+                    BufferedInputStream oin = new BufferedInputStream(new FileInputStream(s[0]));
+                    BufferedOutputStream oos = new BufferedOutputStream(new FileOutputStream(s[1]));
+                    byte[] bytes = new byte[1024];
+                    int led = 0;
+                    while ((led = oin.read(bytes))!= -1){
+                        oos.write(bytes,0,led);
+                    }
+
 
                 }
                 else {
